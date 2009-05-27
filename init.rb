@@ -1,4 +1,4 @@
 require 'finder'
 ActiveRecord::Base.class_eval do
-  include ActiveRecord::Finder
+  include Rubysolo::Finder
 end

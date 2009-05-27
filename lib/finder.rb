@@ -1,4 +1,7 @@
-module ActiveRecord # :nodoc:
+require 'activesupport' unless defined? ActiveSupport
+require 'activerecord' unless defined? ActiveRecord
+
+module Rubysolo # :nodoc:
   module Finder
     def self.included(base) # :nodoc:
       base.extend ClassMethods
@@ -11,16 +14,18 @@ module ActiveRecord # :nodoc:
         end
         self.finder_attribute = attr_name
 
-        self.send(:include, Finder)
+        self.send(:include, FindableModel)
         (class << self; self; end).module_eval do
           alias_method "for_#{attr_name}".to_sym, :[]
         end
       end
     end
 
-    module Finder
+    module FindableModel
       def self.included(base)
         base.instance_eval do
+          validates_uniqueness_of finder_attribute
+
           cattr_accessor :cache_store
           self.cache_store = ActiveSupport::Cache::MemoryStore.new
 
@@ -28,6 +33,10 @@ module ActiveRecord # :nodoc:
             cache_store.fetch(token) { find(:first, :conditions => { finder_attribute => token.to_s}) }
           end
         end
+      end
+
+      def is?(token)
+        self[self.class.finder_attribute] == token.to_s
       end
     end
   end
