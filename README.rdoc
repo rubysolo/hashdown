@@ -4,7 +4,7 @@ http://github.com/rubysolo/finder
 
 == DESCRIPTION:
 
-finder is a super light rails plugin that adds hash-style lookups to ActiveRecord models
+finder is a super lightweight rails plugin that adds hash-style lookups to ActiveRecord models
 
 == EXAMPLE:
 
