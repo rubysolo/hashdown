@@ -30,7 +30,11 @@ module Rubysolo # :nodoc:
           self.cache_store = ActiveSupport::Cache::MemoryStore.new
 
           def self.[](token)
-            cache_store.fetch(token) { find(:first, :conditions => { finder_attribute => token.to_s}) }
+            cache_store.fetch(token) {
+              returning find(:first, :conditions => { finder_attribute => token.to_s}) do |record|
+                raise "Could not find #{self.class_name} with #{finder_attribute} '#{token}'" unless record
+              end
+            }
           end
         end
       end

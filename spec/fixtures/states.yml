@@ -1,0 +1,19 @@
+arizona:
+  name: Arizona
+  abbreviation: AZ
+
+new_york:
+  name: New York
+  abbreviation: NY
+
+california:
+  name: California
+  abbreviation: CA
+
+texas:
+  name: Texas
+  abbreviation: TX
+
+colorado:
+  name: Colorado
+  abbreviation: CO
