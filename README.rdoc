@@ -19,7 +19,7 @@ You can look up states via their abbreviations like so:
 
   @colorado = State[:CO]
 
-And you can generate HTML dropdowns like so:
+These types of reference data models are often something you need to populate a select list on your form, so hashdown includes a handy method to generate your option list:
 
   <%= form.select :state_id, State.select_options %>
 
