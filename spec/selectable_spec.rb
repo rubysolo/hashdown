@@ -24,4 +24,9 @@ describe "an ActiveRecord model with selectable defined" do
     Currency.select_options.map(&:first).should == ['Renminbi', 'Euro', 'Pound Sterling', 'US Dollar']
   end
 
+  it "should allow overriding the key and value generation" do
+    Currency.select_options(:code).map(&:first).should == %w( CNY EUR GBP USD )
+    Currency.select_options(:name, :code).should == [['Renminbi','CNY'],['Euro','EUR'],['Pound Sterling','GBP'],['US Dollar', 'USD']]
+  end
+
 end

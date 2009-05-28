@@ -53,13 +53,24 @@ module Rubysolo # :nodoc:
     module SelectionList
       def self.included(base)
         base.instance_eval do
-          def self.select_options
-            options = scope(:find) || {}
-            options[:order] ||= "name"
+          def self.select_options(*args)
+            options = args.extract_options!
+            options[:value] ||= args.shift
+            [:display_name, :name].each {|sym| options[:value] ||= sym if respond_to?(sym) }
 
-            find(:all, options).map{|record| [record.name, record.id] }
+            options[:key] ||= args.shift
+            options[:key] ||= :id
+
+            find_options = scope(:find) || {}
+            find_options[:order] ||= options[:value]
+
+            find(:all, find_options).map{|record| record.to_pair(options[:key], options[:value]) }
           end
         end
+      end
+
+      def to_pair(key, value)
+        [self.send(value), self.send(key)]
       end
     end # SelectionList
 
