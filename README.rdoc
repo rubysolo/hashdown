@@ -1,10 +1,10 @@
-= finder
+= hashdown
 
-http://github.com/rubysolo/finder
+http://github.com/rubysolo/hashdown
 
 == DESCRIPTION:
 
-finder is a super lightweight rails plugin that adds hash-style lookups to ActiveRecord models
+hashdown is a super lightweight rails plugin that adds hash-style lookups and option lists (for generating dropdowns) to ActiveRecord models
 
 == EXAMPLE:
 
@@ -12,11 +12,16 @@ Given the following class definition:
 
   class State < ActiveRecord::Base
     finder :abbreviation
+    selectable
   end
 
 You can look up states via their abbreviations like so:
 
-  @colorado = State[:co]
+  @colorado = State[:CO]
+
+And you can generate HTML dropdowns like so:
+
+  <%= form.select :state_id, State.select_options %>
 
 This is roughly equivalent to the following implementation:
 
@@ -26,11 +31,15 @@ This is roughly equivalent to the following implementation:
     def self.[](state_code)
       find_by_abbreviation(state_code)
     end
+
+    def self.select_options
+      find(:all).map{|s| [s.name, s.id] }
+    end
   end
 
 ...except it adds ActiveSupport caching for speedy lookups.
 
-== EXAMPLE:
+== LICENSE:
 
 (The MIT License)
 

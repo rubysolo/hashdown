@@ -1,4 +1,4 @@
-require 'finder'
+require 'hashdown'
 ActiveRecord::Base.class_eval do
-  include Rubysolo::Finder
+  include Rubysolo::Hashdown
 end

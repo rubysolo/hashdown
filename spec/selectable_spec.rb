@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
-describe "an ActiveRecord model with selection_list defined" do
+describe "an ActiveRecord model with selectable defined" do
   after(:each) do
     cleanup_db
   end
@@ -11,8 +11,8 @@ describe "an ActiveRecord model with selection_list defined" do
   end
 
 
-  it "should respond to selectable" do
-    State.should.respond_to? :selectable
+  it "should respond to select_options" do
+    State.should.respond_to? :select_options
   end
 
   it "should return options for each record" do

@@ -2,7 +2,7 @@ require 'activesupport' unless defined? ActiveSupport
 require 'activerecord' unless defined? ActiveRecord
 
 module Rubysolo # :nodoc:
-  module Finder
+  module Hashdown
     def self.included(base) # :nodoc:
       base.extend ClassMethods
     end
@@ -63,5 +63,5 @@ module Rubysolo # :nodoc:
       end
     end # SelectionList
 
-  end # Finder
+  end # Hashdown
 end # Rubysolo
