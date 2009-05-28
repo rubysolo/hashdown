@@ -18,6 +18,11 @@ module Rubysolo # :nodoc:
       end
 
       def selectable(options={})
+        class << self
+          attr_accessor :selectable_options
+        end
+        self.selectable_options = options
+
         self.send :include, SelectionList
       end
     end
@@ -49,7 +54,10 @@ module Rubysolo # :nodoc:
       def self.included(base)
         base.instance_eval do
           def self.select_options
-            find(:all, :order => "name").map{|record| [record.name, record.id] }
+            options = scope(:find) || {}
+            options[:order] ||= "name"
+
+            find(:all, options).map{|record| [record.name, record.id] }
           end
         end
       end

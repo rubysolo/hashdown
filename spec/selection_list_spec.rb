@@ -20,4 +20,8 @@ describe "an ActiveRecord model with selection_list defined" do
     State.select_options.map(&:first).should == ['Arizona','California','Colorado','New York','Texas']
   end
 
+  it "should respect default scope find options" do
+    Currency.select_options.map(&:first).should == ['Renminbi', 'Euro', 'Pound Sterling', 'US Dollar']
+  end
+
 end

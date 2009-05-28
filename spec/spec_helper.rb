@@ -16,12 +16,18 @@ def setup_db
     create_table :states do |t|
       t.string :name, :abbreviation
     end
+
+    create_table :currencies do |t|
+      t.string :name, :code
+    end
   end
 end
 
 def load_fixtures
-  YAML.load(IO.read(File.dirname(__FILE__) + '/fixtures/states.yml')).each do |name, attrs|
-    State.create!(attrs)
+  %w( states currencies ).each do |fixture|
+    YAML.load(IO.read(File.dirname(__FILE__) + "/fixtures/#{fixture}.yml")).each do |name, attrs|
+      Object.const_get(fixture.singularize.classify).create!(attrs)
+    end
   end
 end
 
@@ -36,4 +42,9 @@ end
 class State < ActiveRecord::Base
   finder :abbreviation
   selectable
+end
+
+class Currency < ActiveRecord::Base
+  selectable
+  default_scope :order => "code"
 end
