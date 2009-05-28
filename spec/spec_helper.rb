@@ -1,6 +1,10 @@
 require 'spec'
 require 'mocha'
 
+Spec::Runner.configure do |config|
+  config.mock_with :mocha
+end
+
 $:.unshift(File.dirname(__FILE__) + '/../lib')
 require File.join(File.dirname(__FILE__), '..', 'init')
 
@@ -31,4 +35,5 @@ end
 
 class State < ActiveRecord::Base
   finder :abbreviation
+  selectable
 end

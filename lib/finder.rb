@@ -14,10 +14,11 @@ module Rubysolo # :nodoc:
         end
         self.finder_attribute = attr_name
 
-        self.send(:include, FindableModel)
-        (class << self; self; end).module_eval do
-          alias_method "for_#{attr_name}".to_sym, :[]
-        end
+        self.send :include, FindableModel
+      end
+
+      def selectable(options={})
+        self.send :include, SelectionList
       end
     end
 
@@ -42,6 +43,17 @@ module Rubysolo # :nodoc:
       def is?(token)
         self[self.class.finder_attribute] == token.to_s
       end
-    end
-  end
-end
+    end # FindableModel
+
+    module SelectionList
+      def self.included(base)
+        base.instance_eval do
+          def self.select_options
+            find(:all, :order => "name").map{|record| [record.name, record.id] }
+          end
+        end
+      end
+    end # SelectionList
+
+  end # Finder
+end # Rubysolo

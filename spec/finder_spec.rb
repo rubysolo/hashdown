@@ -29,6 +29,7 @@ describe "an ActiveRecord model with finder defined" do
   it "should cache results in memory" do
     @state = State.create!(:abbreviation => "FL", :name => "Florida")
     State.expects(:find).once.returns(@state)
+
     5.times do
       State[:FL].name.should == "Florida"
     end
