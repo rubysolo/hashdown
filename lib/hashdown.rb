@@ -56,7 +56,7 @@ module Rubysolo # :nodoc:
           def self.select_options(*args)
             options = args.extract_options!
             options[:value] ||= args.shift
-            [:display_name, :name].each {|sym| options[:value] ||= sym if respond_to?(sym) }
+            [:display_name, :name].each {|sym| options[:value] ||= sym if instance_methods.include?(sym.to_s) }
 
             options[:key] ||= args.shift
             options[:key] ||= :id
