@@ -41,8 +41,10 @@ This is roughly equivalent to the following implementation:
 
 == COMING SOON:
 
-* add caching to select option list
-* configuration for key, value generation (app, model, and method-call level)
+* configuration for key / value generation
+  * app level
+  * model level
+  * -method call-
 
 == LICENSE:
 

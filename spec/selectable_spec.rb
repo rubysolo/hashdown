@@ -29,4 +29,13 @@ describe "an ActiveRecord model with selectable defined" do
     Currency.select_options(:name, :code).should == [['Renminbi','CNY'],['Euro','EUR'],['Pound Sterling','GBP'],['US Dollar', 'USD']]
   end
 
+  it "should store results in cache" do
+    @states = State.all
+    State.expects(:find).once.returns(@states)
+
+    5.times do
+      State.select_options.length.should == State.count
+    end
+  end
+
 end

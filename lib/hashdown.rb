@@ -33,10 +33,10 @@ module Rubysolo # :nodoc:
           validates_uniqueness_of finder_attribute
 
           cattr_accessor :cache_store
-          self.cache_store = ActiveSupport::Cache::MemoryStore.new
+          self.cache_store ||= ActiveSupport::Cache::MemoryStore.new
 
           def self.[](token)
-            cache_store.fetch(token) {
+            cache_store.fetch("[]:#{token}") {
               returning find(:first, :conditions => { finder_attribute => token.to_s}) do |record|
                 raise "Could not find #{self.class_name} with #{finder_attribute} '#{token}'" unless record
               end
@@ -53,18 +53,23 @@ module Rubysolo # :nodoc:
     module SelectionList
       def self.included(base)
         base.instance_eval do
+          cattr_accessor :cache_store
+          self.cache_store ||= ActiveSupport::Cache::MemoryStore.new
+
           def self.select_options(*args)
-            options = args.extract_options!
-            options[:value] ||= args.shift
-            [:display_name, :name].each {|sym| options[:value] ||= sym if instance_methods.include?(sym.to_s) || columns.map{|c| c.name }.include?(sym.to_s) }
+            cache_store.fetch("select_options:#{args.hash}") {
+              options = args.extract_options!
+              options[:value] ||= args.shift
+              [:display_name, :name].each {|sym| options[:value] ||= sym if instance_methods.include?(sym.to_s) || columns.map{|c| c.name }.include?(sym.to_s) }
 
-            options[:key] ||= args.shift
-            options[:key] ||= :id
+              options[:key] ||= args.shift
+              options[:key] ||= :id
 
-            find_options = scope(:find) || {}
-            find_options[:order] ||= options[:value]
+              find_options = scope(:find) || {}
+              find_options[:order] ||= options[:value]
 
-            find(:all, find_options).map{|record| record.to_pair(options[:key], options[:value]) }
+              find(:all, find_options).map{|record| record.to_pair(options[:key], options[:value]) }
+            }
           end
         end
       end
