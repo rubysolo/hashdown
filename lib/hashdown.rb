@@ -70,7 +70,7 @@ module Rubysolo # :nodoc:
               find_options[:order] ||= options[:value]
 
               find(:all, find_options).map{|record| record.to_pair(options[:key], options[:value]) }
-            }
+            }.dup
           end
         end
       end
