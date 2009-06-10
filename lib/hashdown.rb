@@ -61,6 +61,7 @@ module Rubysolo # :nodoc:
               options = args.extract_options!
               options[:value] ||= args.shift
               [:display_name, :name].each {|sym| options[:value] ||= sym if instance_methods.include?(sym.to_s) || columns.map{|c| c.name }.include?(sym.to_s) }
+              raise "#{self} does not respond to :display_name or :name.  Please specify a value method." unless options[:value]
 
               options[:key] ||= args.shift
               options[:key] ||= :id
