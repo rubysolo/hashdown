@@ -67,7 +67,7 @@ module Rubysolo # :nodoc:
               options[:key] ||= :id
 
               find_options = scope(:find) || {}
-              find_options[:order] ||= options[:value]
+              find_options[:order] ||= options[:order] || options[:value] # TODO : only default columns into order option
 
               find(:all, find_options).map{|record| record.to_pair(options[:key], options[:value]) }
             }.dup
