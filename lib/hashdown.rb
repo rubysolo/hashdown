@@ -75,8 +75,11 @@ module Rubysolo # :nodoc:
         end
       end
 
-      def to_pair(key, value)
-        [self.send(value), self.send(key)]
+      def to_pair(key_generator, val_generator)
+        key = key_generator.respond_to?(:call) ? key_generator.call(self) : self.send(key_generator)
+        val = val_generator.respond_to?(:call) ? val_generator.call(self) : self.send(val_generator)
+
+        [val, key]
       end
     end # SelectionList
 
