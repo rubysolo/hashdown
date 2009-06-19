@@ -1,5 +1,7 @@
 require 'activesupport' unless defined? ActiveSupport
-require 'activerecord' unless defined? ActiveRecord
+require 'activerecord'  unless defined? ActiveRecord
+require 'finder'
+require 'selectable'
 
 module Rubysolo # :nodoc:
   module Hashdown
@@ -14,7 +16,7 @@ module Rubysolo # :nodoc:
         end
         self.finder_attribute = attr_name
 
-        self.send :include, FindableModel
+        self.send :include, Finder
       end
 
       def selectable(options={})
@@ -23,65 +25,16 @@ module Rubysolo # :nodoc:
         end
         self.selectable_options = options
 
-        self.send :include, SelectionList
+        self.send :include, Selectable
       end
     end
 
-    module FindableModel
-      def self.included(base)
-        base.instance_eval do
-          validates_uniqueness_of finder_attribute
+    private
 
-          cattr_accessor :cache_store
-          self.cache_store ||= ActiveSupport::Cache::MemoryStore.new
+    def self.force_cache_miss?
+      defined?(Rails) && Rails.env.test?
+    end
 
-          def self.[](token)
-            cache_store.fetch("[]:#{token}") {
-              returning find(:first, :conditions => { finder_attribute => token.to_s}) do |record|
-                raise "Could not find #{self.class_name} with #{finder_attribute} '#{token}'" unless record
-              end
-            }
-          end
-        end
-      end
-
-      def is?(token)
-        self[self.class.finder_attribute] == token.to_s
-      end
-    end # FindableModel
-
-    module SelectionList
-      def self.included(base)
-        base.instance_eval do
-          cattr_accessor :cache_store
-          self.cache_store ||= ActiveSupport::Cache::MemoryStore.new
-
-          def self.select_options(*args)
-            cache_store.fetch("select_options:#{args.hash}") {
-              options = args.extract_options!
-              options[:value] ||= args.shift
-              [:display_name, :name].each {|sym| options[:value] ||= sym if instance_methods.include?(sym.to_s) || columns.map{|c| c.name }.include?(sym.to_s) }
-              raise "#{self} does not respond to :display_name or :name.  Please specify a value method." unless options[:value]
-
-              options[:key] ||= args.shift
-              options[:key] ||= :id
-
-              find_options = scope(:find) || {}
-              find_options[:order] ||= options[:order] || options[:value] # TODO : only default columns into order option
-
-              find(:all, find_options).map{|record| record.to_pair(options[:key], options[:value]) }
-            }.dup
-          end
-        end
-      end
-
-      def to_pair(key_generator, val_generator)
-        key = key_generator.respond_to?(:call) ? key_generator.call(self) : self.send(key_generator)
-        val = val_generator.respond_to?(:call) ? val_generator.call(self) : self.send(val_generator)
-
-        [val, key]
-      end
-    end # SelectionList
 
   end # Hashdown
 end # Rubysolo

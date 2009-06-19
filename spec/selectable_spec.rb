@@ -1,13 +1,15 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe "an ActiveRecord model with selectable defined" do
-  after(:each) do
-    cleanup_db
-  end
 
   before(:each) do
+    Rails.test_environment = false
     State.cache_store.clear
     load_fixtures
+  end
+
+  after(:each) do
+    cleanup_db
   end
 
 
@@ -32,6 +34,17 @@ describe "an ActiveRecord model with selectable defined" do
   it "should store results in cache" do
     @states = State.all
     State.expects(:find).once.returns(@states)
+
+    5.times do
+      State.select_options.length.should == State.count
+    end
+  end
+
+  it "should force cache miss in Rails test environment" do
+    Rails.test_environment = true
+
+    @states = State.all
+    State.expects(:find).times(5).returns(@states)
 
     5.times do
       State.select_options.length.should == State.count

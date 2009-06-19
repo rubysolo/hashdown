@@ -39,6 +39,18 @@ def cleanup_db
   end
 end
 
+class Rails
+  cattr_accessor :test_environment
+
+  def self.env
+    self
+  end
+
+  def self.test?
+    @@test_environment
+  end
+end
+
 class State < ActiveRecord::Base
   finder :abbreviation
   selectable
