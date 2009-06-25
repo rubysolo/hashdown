@@ -51,4 +51,8 @@ describe "an ActiveRecord model with selectable defined" do
     end
   end
 
+  it "should not default non-column ordering" do
+    lambda{ CustomDisplay.select_options }.should_not raise_error
+  end
+
 end

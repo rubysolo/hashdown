@@ -56,6 +56,15 @@ class State < ActiveRecord::Base
   selectable
 end
 
+class CustomDisplay < ActiveRecord::Base
+  selectable
+  set_table_name 'states'
+
+  def display_name
+    "custom #{name}"
+  end
+end
+
 class Currency < ActiveRecord::Base
   selectable
   default_scope :order => "code"
