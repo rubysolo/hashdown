@@ -10,12 +10,12 @@ module Rubysolo # :nodoc:
           def self.select_options(*args)
             cache_store.fetch("select_options:#{args.hash}", :force => Rubysolo::Hashdown.force_cache_miss?) {
               options = args.extract_options!
-              options[:value] ||= args.shift
+              options[:value] ||= args.shift || selectable_options[:value]
 
-              [:display_name, :name].each {|sym| options[:value] ||= sym if instance_methods.include?(sym.to_s) || has_column?(sym) }
+              [:display_name, :name].each {|sym| options[:value] ||= sym if instance_methods.include?(sym.to_s) || has_column?(sym) } unless options[:value]
               raise "#{self} does not respond to :display_name or :name.  Please specify a value method." unless options[:value]
 
-              options[:key] ||= args.shift
+              options[:key] ||= args.shift || selectable_options[:key]
               options[:key] ||= :id
 
               find_options = scope(:find) || {}

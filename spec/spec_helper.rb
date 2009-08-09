@@ -65,6 +65,11 @@ class CustomDisplay < ActiveRecord::Base
   end
 end
 
+class CustomDisplayDeux < ActiveRecord::Base
+  selectable :value => :abbreviation
+  set_table_name 'states'
+end
+
 class Currency < ActiveRecord::Base
   selectable
   default_scope :order => "code"

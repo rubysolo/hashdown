@@ -55,4 +55,12 @@ describe "an ActiveRecord model with selectable defined" do
     lambda{ CustomDisplay.select_options }.should_not raise_error
   end
 
+  it "should accept defaults at the model level" do
+    CustomDisplayDeux.select_options.should == State.select_options(:value => :abbreviation)
+  end
+
+  it "should allow overriding model-level defaults" do
+    CustomDisplayDeux.select_options(:value => :name).should == State.select_options
+  end
+
 end
