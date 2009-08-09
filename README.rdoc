@@ -43,7 +43,6 @@ This is roughly equivalent to the following implementation:
 
 * configuration for key / value generation
   * app level
-  * model level
 
 == LICENSE:
 
