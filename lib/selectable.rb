@@ -24,7 +24,7 @@ module Rubysolo # :nodoc:
               find_options[:order] = options[:order] if options.has_key?(:order)
               find_options[:order] ||= options[:value] if has_column?(options[:value])
 
-              find(:all, find_options).map{|record| record.to_pair(options[:key], options[:value]) }
+              find(:all, find_options).map{|record| record.generate_option_pair(options[:key], options[:value]) }
             }.dup
           end
 
@@ -34,7 +34,7 @@ module Rubysolo # :nodoc:
         end
       end
 
-      def to_pair(key_generator, val_generator)
+      def generate_option_pair(key_generator, val_generator)
         key = key_generator.respond_to?(:call) ? key_generator.call(self) : self.send(key_generator)
         val = val_generator.respond_to?(:call) ? val_generator.call(self) : self.send(val_generator)
 
