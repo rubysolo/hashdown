@@ -1,0 +1,15 @@
+pound_sterling:
+  code: GBP
+  name: Pound Sterling
+
+euro:
+  code: EUR
+  name: Euro
+
+us_dollar:
+  code: USD
+  name: US Dollar
+
+renminbi:
+  code: CNY
+  name: Renminbi

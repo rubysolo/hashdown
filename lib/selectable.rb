@@ -8,7 +8,8 @@ module Rubysolo # :nodoc:
           self.cache_store ||= ActiveSupport::Cache::MemoryStore.new
 
           def self.select_options(*args)
-            cache_store.fetch("select_options:#{args.hash}", :force => Rubysolo::Hashdown.force_cache_miss?) {
+            cache_key = ((scope(:find) || {}).to_a + args).hash
+            cache_store.fetch("select_options:#{cache_key}", :force => Rubysolo::Hashdown.force_cache_miss?) {
               options = args.extract_options!
               options[:value] ||= args.shift || selectable_options[:value]
 
