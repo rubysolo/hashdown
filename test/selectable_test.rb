@@ -20,6 +20,18 @@ class SelectableTest < ActiveSupport::TestCase
     assert_equal ['Arizona','California','Colorado','New York','Texas'], State.select_options.map(&:first)
   end
 
+  test "grouped select options" do
+    grouped_states = State.select_options(:group => lambda{|state| state.name[0,1] })
+    assert_equal %w[ A C N T ], grouped_states.map(&:first)
+    grouped_states.each do |group, states|
+      if group == 'C'
+        assert_equal 2, states.length
+      else
+        assert_equal 1, states.length
+      end
+    end
+  end
+
   test "cache key depends on scope" do
     assert_equal State.count, State.select_options.length
     assert_equal ['Arizona','California','Colorado','New York','Texas'], State.select_options.map(&:first)

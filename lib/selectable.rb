@@ -24,21 +24,28 @@ module Rubysolo # :nodoc:
               find_options[:order] = options[:order] if options.has_key?(:order)
               find_options[:order] ||= options[:value] if has_column?(options[:value])
 
-              find(:all, find_options).map{|record| record.generate_option_pair(options[:key], options[:value]) }
+              grouped_records = find(:all, find_options).group_by{ |record|
+                options[:group] ? call_or_send(record, options[:group]) : :all
+              }.map{ |group, records|
+                [group, records.map{|record| record.generate_option_pair(options[:key], options[:value]) }]
+              }
+
+              options[:group] ? grouped_records : grouped_records.first.last
             }.dup
           end
 
           def self.has_column?(column_name)
             columns.map{|c| c.name }.include?(column_name.to_s)
           end
+
+          def self.call_or_send(receiver, operator)
+            operator.respond_to?(:call) ? operator.call(receiver) : receiver.send(operator)
+          end
         end
       end
 
       def generate_option_pair(key_generator, val_generator)
-        key = key_generator.respond_to?(:call) ? key_generator.call(self) : self.send(key_generator)
-        val = val_generator.respond_to?(:call) ? val_generator.call(self) : self.send(val_generator)
-
-        [val, key]
+        [self.class.call_or_send(self, val_generator), self.class.call_or_send(self, key_generator)]
       end
 
       private
