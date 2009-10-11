@@ -58,6 +58,11 @@ class State < ActiveRecord::Base
   named_scope :starting_with_C, :conditions => "name like 'C%'"
 end
 
+class NoErrorState < ActiveRecord::Base
+  finder :abbreviation, :default => "Not Found"
+  set_table_name 'states'
+end
+
 class CustomDisplay < ActiveRecord::Base
   selectable
   set_table_name 'states'

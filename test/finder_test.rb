@@ -26,6 +26,13 @@ class FinderTest < ActiveSupport::TestCase
     assert_equal @california, State[:CA]
   end
 
+  test "set default to prevent error" do
+    assert_raises(RuntimeError) { State[:Boom] }
+    assert_nothing_raised {
+      assert_equal "Not Found", NoErrorState[:FindDefault]
+    }
+  end
+
   test "caching" do
     @state = State.create!(:abbreviation => "FL", :name => "Florida")
     State.expects(:find).once.returns(@state)

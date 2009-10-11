@@ -10,11 +10,11 @@ module Rubysolo # :nodoc:
     end
 
     module ClassMethods
-      def finder(attr_name)
+      def finder(attr_name, options={})
         class << self
-          attr_accessor :finder_attribute
+          attr_accessor :finder_options
         end
-        self.finder_attribute = attr_name
+        self.finder_options = options.merge(:attribute => attr_name)
 
         self.send :include, Finder
       end
