@@ -12,16 +12,35 @@ Given the following class definition:
 
   class State < ActiveRecord::Base
     finder :abbreviation
-    selectable
   end
 
 You can look up states via their abbreviations like so:
 
   @colorado = State[:CO]
 
-These types of reference data models are often something you need to populate a select list on your form, so hashdown includes a handy method to generate your option list:
+By default, calling the finder method with a token that does not exist in the database will result in a RuntimError exception being thrown.  This can be overridden by adding a :default option to your finder declaration.
+
+  class PurchaseOrder < ActiveRecord::Base
+    finder :number, :default => nil
+  end
+
+In this case, PurchaseOrder['00734'] will silently return nil if that number is not found.
+
+These types of reference data models are often something you need to populate a select list on your form, so hashdown includes a method to generate your option list:
+
+1. Declare your model to be selectable:
+
+  class State < ActiveRecord::Base
+    selectable
+  end
+
+2. Call select_options in your form to return a set of name, value pairs to pass into a select builder:
 
   <%= form.select :state_id, State.select_options %>
+
+By default, selectable will return the :id of the record as the value, and the :name attribute value as the display.  This can be overridden inline in the select_options call:
+
+The grouped_options_for_select format is also supported
 
 This is roughly equivalent to the following implementation:
 
@@ -38,6 +57,8 @@ This is roughly equivalent to the following implementation:
   end
 
 ...except it adds ActiveSupport caching for speedy lookups.
+
+
 
 == COMING SOON:
 
