@@ -59,6 +59,11 @@ class State < ActiveRecord::Base
 end
 
 class NoErrorState < ActiveRecord::Base
+  finder :abbreviation, :default => nil
+  set_table_name 'states'
+end
+
+class StateWithDefault < ActiveRecord::Base
   finder :abbreviation, :default => "Not Found"
   set_table_name 'states'
 end

@@ -12,7 +12,7 @@ module Rubysolo # :nodoc:
           def self.[](token)
             cache_store.fetch("[]:#{token}", :force => Rubysolo::Hashdown.force_cache_miss?) {
               record = find(:first, :conditions => { finder_options[:attribute] => token.to_s })
-              if finder_options[:default]
+              if finder_options.has_key?(:default)
                 record ||= finder_options[:default]
               else
                 raise "Could not find #{self.class_name} with #{finder_options[:attribute]} '#{token}'" unless record

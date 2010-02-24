@@ -28,8 +28,9 @@ class FinderTest < ActiveSupport::TestCase
 
   test "set default to prevent error" do
     assert_raises(RuntimeError) { State[:Boom] }
+    assert_nothing_raised { NoErrorState[:FindDefault] }
     assert_nothing_raised {
-      assert_equal "Not Found", NoErrorState[:FindDefault]
+      assert_equal "Not Found", StateWithDefault[:FindDefault]
     }
   end
 
