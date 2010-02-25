@@ -24,13 +24,15 @@ module Rubysolo # :nodoc:
               find_options[:order] = options[:order] if options.has_key?(:order)
               find_options[:order] ||= options[:value] if has_column?(options[:value])
 
-              grouped_records = find(:all, find_options).group_by{ |record|
-                options[:group] ? call_or_send(record, options[:group]) : :all
-              }.map{ |group, records|
-                [group, records.map{|record| record.generate_option_pair(options[:key], options[:value]) }]
-              }
-
-              options[:group] ? grouped_records : grouped_records.first.last
+              if grouping = options[:group]
+                find(:all, find_options).group_by{ |record|
+                  call_or_send(record, grouping)
+                }.map{ |group, records|
+                  [group, records.map{|record| record.generate_option_pair(options[:key], options[:value]) }]
+                }
+              else
+                find(:all, find_options).map{|record| record.generate_option_pair(options[:key], options[:value]) }
+              end
             }.dup
           end
 

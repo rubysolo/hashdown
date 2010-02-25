@@ -95,4 +95,11 @@ class SelectableTest < ActiveSupport::TestCase
     assert_equal State.select_options, CustomDisplayDeux.select_options(:value => :name)
   end
 
+  test "empty table generates empty select options" do
+    State.all.map(&:destroy)
+    assert_nothing_raised {
+      assert_equal [], State.select_options
+    }
+  end
+
 end
