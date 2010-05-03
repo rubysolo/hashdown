@@ -8,6 +8,8 @@ module Rubysolo # :nodoc:
 
           cattr_accessor :cache_store
           self.cache_store ||= ActiveSupport::Cache::MemoryStore.new
+          after_save :clear_finder_cache
+          after_destroy :clear_finder_cache
 
           def self.[](token)
             cache_store.fetch("[]:#{token}", :force => Rubysolo::Hashdown.force_cache_miss?) {
@@ -25,6 +27,12 @@ module Rubysolo # :nodoc:
 
       def is?(token)
         self[self.class.finder_attribute] == token.to_s
+      end
+
+      private
+
+      def clear_finder_cache
+        self.class.cache_store.clear
       end
     end # Finder
 

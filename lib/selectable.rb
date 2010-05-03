@@ -7,6 +7,7 @@ module Rubysolo # :nodoc:
           cattr_accessor :cache_store
           self.cache_store ||= ActiveSupport::Cache::MemoryStore.new
           after_save :clear_selectable_cache
+          after_destroy :clear_selectable_cache
 
           def self.select_options(*args)
             cache_key = ((scope(:find) || {}).to_a + args).hash

@@ -55,4 +55,35 @@ class FinderTest < ActiveSupport::TestCase
       assert_equal "Florida", @lookup.name
     end
   end
+
+  test "save or delete clears cache" do
+    @state = State.create!(:abbreviation => "FL", :name => "Florida")
+
+    3.times do
+      lookup = State[:FL]
+      assert_equal 'Florida', lookup.name
+      State.connection.execute("UPDATE states SET name = 'Flooridia' WHERE abbreviation = 'FL'")
+    end
+
+    # update
+    @modify = State.find(@state.id)
+    @modify.name = 'Flooridia'
+    @modify.save
+
+    3.times do
+      lookup = State[:FL]
+      assert_equal 'Flooridia', lookup.name
+      State.connection.execute("UPDATE states SET name = 'Florida' WHERE abbreviation = 'FL'")
+    end
+
+    # delete
+    @state = NoErrorState[:FL]
+    assert_equal "Florida", @state.name
+
+    @delete = NoErrorState.find(@state.id)
+    @delete.destroy
+
+    @state = NoErrorState[:FL]
+    assert @state.nil?
+  end
 end

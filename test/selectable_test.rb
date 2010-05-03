@@ -70,17 +70,20 @@ class SelectableTest < ActiveSupport::TestCase
   end
 
   test "create or update clears the cache" do
-    5.times do
-      assert_equal State.count, State.select_options.length
-    end
+    assert_equal State.count, State.select_options.length
 
     assert_difference 'State.count' do
       State.create!(:name => "New Jersey", :abbreviation => "NJ")
     end
 
-    5.times do
-      assert_equal State.count, State.select_options.length
-    end
+    assert_equal 'Arizona', State.select_options.first.first
+    assert_equal State.count, State.select_options.length
+
+    @state = State.find_by_abbreviation('AZ')
+    @state.name = 'AZ -- Keep Out'
+    @state.save
+
+    assert_equal 'AZ -- Keep Out', State.select_options.first.first
   end
 
   test "non-column ordering is not defaulted" do
