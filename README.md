@@ -32,7 +32,7 @@ You can look up states via their abbreviations like so:
     @colorado = State[:CO]
 
 By default, calling the finder method with a token that does not exist in the
-database will result in an ActiveRecord::RecordNotFount exception being thrown.
+database will result in an ActiveRecord::RecordNotFound exception being thrown.
 This can be overridden by adding a :default option to your finder declaration.
 
     class PurchaseOrder < ActiveRecord::Base
@@ -74,11 +74,11 @@ implementation:
       validates_uniqueness_of :abbreviation
 
       def self.[](state_code)
-        find_by_abbreviation(state_code)
+        where(abbreviation: state_code).first
       end
 
       def self.select_options
-        find(:all).map{|s| [s.name, s.id] }
+        all.map{|s| [s.name, s.id] }
       end
     end
 
