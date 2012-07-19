@@ -1,7 +1,9 @@
 # Hashdown
 
 Hashdown is a super lightweight rails plugin that adds hash-style lookups and
-option lists (for generating dropdowns) to ActiveRecord models
+option lists (for generating dropdowns) to ActiveRecord models.  Note: Hashdown
+has been updated to support Rails 3.  If you're looking for the original plugin
+version, it's in the [rails 2 branch](https://github.com/rubysolo/hashdown/tree/rails2)
 
 ## Installation
 
