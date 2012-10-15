@@ -1,6 +1,10 @@
 class State < ActiveRecord::Base
   scope :starting_with_c, where("name like 'C%'")
   finder :abbreviation
+
+  def label
+    "#{ abbreviation } (#{ name })"
+  end
 end
 
 class SortedState < ActiveRecord::Base

@@ -16,9 +16,12 @@ module Hashdown
       options[:value] ||= args.shift || :id
 
       scope = scoped
-      scope = scope.order(options[:label]) if scope.arel.orders.empty? && columns.any?{|c| c.name == options[:label].to_s }
+      options[:is_sorted] = scope.arel.orders.any?
+      scope = select_options_scope_with_order(scope, options)
 
-      Hashdown.cache.fetch(Hashdown.cache_key(:select_options, self.to_s, select_options_cache_key(options, scope)), :force => Hashdown.force_cache_miss?) do
+      cache_key = Hashdown.cache_key(:select_options, self.to_s, select_options_cache_key(options, scope))
+
+      Hashdown.cache.fetch(cache_key, :force => Hashdown.force_cache_miss?) do
         if grouping = options[:group]
           scope.all.group_by {|record| grouping.call(record) }.map do |group, records|
             [group, map_records_to_select_options(records, options)]
@@ -39,7 +42,23 @@ module Hashdown
       end
 
       def map_records_to_select_options(records, options)
-        records.map{|record| [ record[options[:label]], record[options[:value]] ] }
+        records = records.map { |record| select_option_for_record(record, options) }
+        options[:is_sorted] ? records : records.sort
+      end
+
+      def select_option_for_record(record, options)
+        [ record.send(options[:label]), record.send(options[:value]) ]
+      end
+
+      def select_options_scope_with_order(scope, options)
+        unless options[:is_sorted]
+          if columns.any? { |c| c.name == options[:label].to_s }
+            options[:is_sorted] = true
+            return scope.order(options[:label])
+          end
+        end
+
+        scope
       end
     end
 

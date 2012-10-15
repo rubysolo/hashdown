@@ -15,6 +15,12 @@ describe Hashdown::SelectOptions do
     State.select_options.map(&:first).should eq state_names
   end
 
+  it 'allows use of methods for labels' do
+    State.select_options(:label => :label).map(&:first).should eq(
+      ['AZ (Arizona)', 'CA (California)', 'CO (Colorado)', 'NY (New York)', 'TX (Texas)']
+    )
+  end
+
   it 'respects order if specified' do
     Currency.select_options.map(&:first).should eq ['Renminbi', 'Euro', 'Pound Sterling', 'US Dollar']
   end
