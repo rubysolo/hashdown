@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Hashdown::SelectOptions do
   let(:state_names) { %w(Arizona California Colorado New\ York Texas) }
 
-  it 'adds #select_options to ActiveRecord classes' do
+  it 'adds #select_options to ActiveRecord classes declared selectable' do
     State.should respond_to(:select_options)
   end
 
@@ -16,7 +16,7 @@ describe Hashdown::SelectOptions do
   end
 
   it 'allows use of methods for labels' do
-    State.select_options(:label => :label).map(&:first).should eq(
+    State.select_options(:label).map(&:first).should eq(
       ['AZ (Arizona)', 'CA (California)', 'CO (Colorado)', 'NY (New York)', 'TX (Texas)']
     )
   end

@@ -1,6 +1,7 @@
 class State < ActiveRecord::Base
   scope :starting_with_c, where("name like 'C%'")
   finder :abbreviation
+  selectable
 
   def label
     "#{ abbreviation } (#{ name })"
@@ -20,4 +21,5 @@ end
 
 class Currency < ActiveRecord::Base
   default_scope order(:code)
+  selectable
 end
