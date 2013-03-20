@@ -20,13 +20,18 @@ module Hashdown
       end
 
       def [](token)
-        Hashdown.cache.fetch(Hashdown.cache_key(:finder, self.to_s, token), :force => Hashdown.force_cache_miss?) do
-          where({hashdown.finder.key => token.to_s}).first || (
-            hashdown.finder.default? ?
-              hashdown.finder.default :
-              raise(ActiveRecord::RecordNotFound)
-          )
+        cache_key = Hashdown.cache_key(:finder, self.to_s, token)
+
+        Hashdown.cache.fetch(cache_key, :force => Hashdown.force_cache_miss?) do
+          where({hashdown.finder.key => token.to_s}).first || hashdown_default_or_raise
         end
+      end
+
+      private
+
+      def hashdown_default_or_raise
+        raise ActiveRecord::RecordNotFound unless hashdown.finder.default?
+        hashdown.finder.default
       end
     end
 
