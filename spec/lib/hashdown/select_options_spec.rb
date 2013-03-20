@@ -32,7 +32,7 @@ describe Hashdown::SelectOptions do
   end
 
   it 'generates grouped options' do
-    grouped_states = State.select_options(group: lambda{|state| state.name.first })
+    grouped_states = State.select_options(group: lambda { |state| state.name[0] })
     grouped_states.map(&:first).should eq %w( A C N T )
     grouped_states.detect{|group, states| group == 'C' }.last.length.should eq 2
   end

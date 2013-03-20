@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{super lightweight Rails plugin that adds hash-style lookups and option list (for generating dropdowns) to ActiveRecord models}
   gem.homepage      = "https://github.com/rubysolo/hashdown"
 
-  gem.add_dependency 'activerecord', '~> 3.0'
+  gem.add_dependency 'activerecord', '>= 3.0'
 
   gem.add_development_dependency 'pry-nav'
   gem.add_development_dependency 'rake'
