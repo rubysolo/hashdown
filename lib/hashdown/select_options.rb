@@ -32,7 +32,7 @@ module Hashdown
 
         cache_key = Hashdown.cache_key(:select_options, self.to_s, select_options_cache_key(options, scope))
 
-        Hashdown.cache.fetch(cache_key, :force => Hashdown.force_cache_miss?) do
+        Hashdown.cached(cache_key) do
           if grouping = options[:group]
             scope.all.group_by {|record| grouping.call(record) }.map do |group, records|
               [group, map_records_to_select_options(records, options)]

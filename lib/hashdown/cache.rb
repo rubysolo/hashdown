@@ -19,6 +19,12 @@ module Hashdown
     cache.delete(cache_key(source, class_name, token))
   end
 
+  def self.cached(cache_key)
+    cache.fetch(cache_key, :force => force_cache_miss?) do
+      yield
+    end
+  end
+
   class Config
     def initialize(hash={})
       @data = hash

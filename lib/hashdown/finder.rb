@@ -22,7 +22,7 @@ module Hashdown
       def [](token)
         cache_key = Hashdown.cache_key(:finder, self.to_s, token)
 
-        Hashdown.cache.fetch(cache_key, :force => Hashdown.force_cache_miss?) do
+        Hashdown.cached(cache_key) do
           where({hashdown.finder.key => token.to_s}).first || hashdown_default_or_raise
         end
       end
