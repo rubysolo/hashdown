@@ -11,8 +11,12 @@ module Hashdown
     Rails.env.test? if defined?(Rails)
   end
 
+  def self.environment
+    defined?(Rails) ? Rails.env : nil
+  end
+
   def self.cache_key(source, class_name, token=nil)
-    ['hashdown', class_name, source, token].compact.join('-')
+    ['hashdown', environment, class_name, source, token].compact.join('-')
   end
 
   def self.uncache(source, class_name, token)
