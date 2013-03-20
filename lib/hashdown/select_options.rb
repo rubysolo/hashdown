@@ -24,12 +24,7 @@ module Hashdown
 
     module ClassMethods
       def select_options(*args)
-        options = args.pop if args.last.is_a?(Hash)
-        options ||= {}
-
-        options[:label] ||= args.shift if args.any?
-        options[:value] ||= args.shift if args.any?
-        options.reverse_merge!(select_options_options)
+        options = generate_options_for_cache_key(args)
 
         scope = scoped
         options[:is_sorted] = scope.arel.orders.any?
@@ -49,6 +44,17 @@ module Hashdown
       end
 
       private
+
+      def generate_options_for_cache_key(args)
+        options = args.pop if args.last.is_a?(Hash)
+        options ||= {}
+
+        options[:label] ||= args.shift if args.any?
+        options[:value] ||= args.shift if args.any?
+        options.reverse_merge!(select_options_options)
+
+        options
+      end
 
       def select_options_cache_key(options, scope)
         key = options.sort.each_with_object(""){|ck,(k,v)| ck << "#{ k }:#{ v };" }
