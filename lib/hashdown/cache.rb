@@ -1,6 +1,6 @@
 module Hashdown
   def self.cache
-    @cache ||= rails_cache || local_cache
+    @cache ||= rails.cache || local_cache
   end
 
   def self.cache=(value)
@@ -8,15 +8,11 @@ module Hashdown
   end
 
   def self.force_cache_miss?
-    Rails.env.test? if defined?(Rails)
-  end
-
-  def self.environment
-    defined?(Rails) ? Rails.env : nil
+    rails.env.test?
   end
 
   def self.cache_key(source, class_name, token=nil)
-    ['hashdown', environment, class_name, source, token].compact.join('-')
+    ['hashdown', rails.env, class_name, source, token].compact.join('-')
   end
 
   def self.uncache(source, class_name, token)
@@ -45,8 +41,8 @@ module Hashdown
 
   private
 
-  def self.rails_cache
-    Rails.cache if defined?(Rails)
+  def self.rails
+    @rails ||= defined?(Rails) ? Rails : Config.new(cache: nil, env: Config.new)
   end
 
   def self.local_cache

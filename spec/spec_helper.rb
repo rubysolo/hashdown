@@ -10,6 +10,12 @@ require 'hashdown/select_options'
 ActiveRecord::Base.establish_connection(:adapter  => 'sqlite3', :database => ':memory:')
 load 'support/models.rb'
 
+module Hashdown
+  def self.reset
+    @cache = @rails = nil
+  end
+end
+
 RSpec.configure do |config|
   config.mock_with :rspec
 
@@ -18,10 +24,10 @@ RSpec.configure do |config|
     load 'support/schema.rb'
     load 'support/seeds.rb'
 
-    Hashdown.cache = nil
+    Hashdown.reset
   end
 
   config.after(:each) do
-    Hashdown.cache = nil
+    Hashdown.reset
   end
 end
