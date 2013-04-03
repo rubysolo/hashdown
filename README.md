@@ -1,5 +1,9 @@
 # Hashdown
 
+[![Gem Version](https://badge.fury.io/rb/hashdown.png)](http://badge.fury.io/rb/hashdown)
+[![Build Status](https://travis-ci.org/rubysolo/hashdown.png?branch=master)](https://travis-ci.org/rubysolo/hashdown)
+[![Code Climate](https://codeclimate.com/github/rubysolo/hashdown.png)](https://codeclimate.com/github/rubysolo/hashdown)
+
 Hashdown is a super lightweight rails plugin that adds hash-style lookups and
 option lists (for generating dropdowns) to ActiveRecord models.  Note: Hashdown
 has been updated to support Rails 3.  If you're looking for the original plugin
