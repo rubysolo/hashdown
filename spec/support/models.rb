@@ -1,5 +1,5 @@
 class State < ActiveRecord::Base
-  scope :starting_with_c, where("name like 'C%'")
+  scope :starting_with_c, -> { where("name like 'C%'") }
   finder :abbreviation
   selectable
 
@@ -10,7 +10,7 @@ end
 
 class SortedState < ActiveRecord::Base
   self.table_name = 'states'
-  default_scope order(:abbreviation)
+  default_scope { order(:abbreviation) }
   finder :abbreviation
 end
 
@@ -20,6 +20,6 @@ class StateDefaultNil < ActiveRecord::Base
 end
 
 class Currency < ActiveRecord::Base
-  default_scope order(:code)
+  default_scope { order(:code) }
   selectable
 end

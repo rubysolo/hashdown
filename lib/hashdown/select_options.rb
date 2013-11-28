@@ -26,7 +26,7 @@ module Hashdown
       def select_options(*args)
         options = generate_options_for_cache_key(args)
 
-        scope = scoped
+        scope = where(nil)
         options[:is_sorted] = scope.arel.orders.any?
         scope = select_options_scope_with_order(scope, options)
 
@@ -34,11 +34,11 @@ module Hashdown
 
         Hashdown.cached(cache_key) do
           if grouping = options[:group]
-            scope.all.group_by {|record| grouping.call(record) }.map do |group, records|
+            scope.to_a.group_by { |record| grouping.call(record) }.map do |group, records|
               [group, map_records_to_select_options(records, options)]
             end
           else
-            map_records_to_select_options(scope.all, options)
+            map_records_to_select_options(scope.to_a, options)
           end
         end
       end

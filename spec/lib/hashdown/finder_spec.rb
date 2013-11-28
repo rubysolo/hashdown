@@ -34,18 +34,18 @@ describe Hashdown::Finder do
     let(:florida) { State.new(abbreviation: 'FL', name: 'Florida') }
 
     it 'caches found records' do
-      scope = mock(first: florida)
+      scope = double(first: florida)
       State.should_receive(:where).once.and_return(scope)
 
       2.times { State[:FL].name.should eq 'Florida' }
     end
 
     describe 'in test environment' do
-      before { Object.const_set('Rails', mock(env: mock(test?: true), cache: ActiveSupport::Cache::MemoryStore.new)) }
+      before { Object.const_set('Rails', double(env: double(test?: true), cache: ActiveSupport::Cache::MemoryStore.new)) }
       after  { Object.send(:remove_const, 'Rails') }
 
       it 'forces cache miss' do
-        scope = mock(first: florida)
+        scope = double(first: florida)
         State.should_receive(:where).twice.and_return(scope)
 
         2.times { State[:FL].name.should eq 'Florida' }
@@ -53,7 +53,7 @@ describe Hashdown::Finder do
     end
 
     it 'clears the cache on save' do
-      scope = mock(first: florida)
+      scope = double(first: florida)
       State.should_receive(:where).twice.and_return(scope)
 
       State[:FL].save
@@ -61,7 +61,7 @@ describe Hashdown::Finder do
     end
 
     it 'clears the cache on destroy' do
-      scope = mock(first: florida)
+      scope = double(first: florida)
       State.should_receive(:where).twice.and_return(scope)
 
       State[:FL].destroy

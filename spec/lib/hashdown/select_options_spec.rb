@@ -47,22 +47,22 @@ describe Hashdown::SelectOptions do
 
   describe 'cache layer' do
     let(:states) { State.all }
-    let(:mock_scope) { mock(arel: mock(orders: %w( name )), to_sql: "SELECT * FROM states") }
+    let(:mock_scope) { double(arel: double(orders: %w( name )), to_sql: "SELECT * FROM states") }
 
     it 'should cache found records' do
-      mock_scope.should_receive(:all).once.and_return(states)
-      State.stub(:scoped).and_return(mock_scope)
+      mock_scope.should_receive(:to_a).once.and_return(states)
+      State.stub(:where).and_return(mock_scope)
 
       2.times { State.select_options.length.should eq states.length }
     end
 
     describe 'in test environment' do
-      before { Object.const_set('Rails', mock(env: mock(test?: true), cache: ActiveSupport::Cache::MemoryStore.new)) }
+      before { Object.const_set('Rails', double(env: double(test?: true), cache: ActiveSupport::Cache::MemoryStore.new)) }
       after  { Object.send(:remove_const, 'Rails') }
 
       it 'forces cache miss' do
-        mock_scope.should_receive(:all).twice.and_return(states)
-        State.stub(:scoped).and_return(mock_scope)
+        mock_scope.should_receive(:to_a).twice.and_return(states)
+        State.stub(:where).and_return(mock_scope)
 
         2.times { State.select_options.length.should eq states.length }
       end
@@ -74,8 +74,8 @@ describe Hashdown::SelectOptions do
     end
 
     it 'clears the cache on save' do
-      mock_scope.should_receive(:all).twice.and_return(states)
-      State.stub(:scoped).and_return(mock_scope)
+      mock_scope.should_receive(:to_a).twice.and_return(states)
+      State.stub(:where).and_return(mock_scope)
 
       State.select_options
       states.first.save
@@ -83,8 +83,8 @@ describe Hashdown::SelectOptions do
     end
 
     it 'clears the cache on destroy' do
-      mock_scope.should_receive(:all).twice.and_return(states)
-      State.stub(:scoped).and_return(mock_scope)
+      mock_scope.should_receive(:to_a).twice.and_return(states)
+      State.stub(:where).and_return(mock_scope)
 
       State.select_options
       states.first.destroy
