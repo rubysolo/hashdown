@@ -57,9 +57,10 @@ module Hashdown
       end
 
       def select_options_cache_key(options, scope)
-        key = options.sort.each_with_object(""){|ck,(k,v)| ck << "#{ k }:#{ v };" }
-        key << scope.to_sql
-        key = Digest::MD5.hexdigest(key)
+        Digest::MD5.hexdigest(options.sort.to_json.tap do |key|
+          key << scope.to_sql
+          key << scope.where_values_hash.to_json
+        end)
       end
 
       def map_records_to_select_options(records, options)

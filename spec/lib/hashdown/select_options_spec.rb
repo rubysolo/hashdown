@@ -47,7 +47,7 @@ describe Hashdown::SelectOptions do
 
   describe 'cache layer' do
     let(:states) { State.all }
-    let(:mock_scope) { double(arel: double(orders: %w( name )), to_sql: "SELECT * FROM states") }
+    let(:mock_scope) { double(arel: double(orders: %w( name )), to_sql: "SELECT * FROM states", where_values_hash: {}) }
 
     it 'should cache found records' do
       mock_scope.should_receive(:to_a).once.and_return(states)
@@ -71,6 +71,12 @@ describe Hashdown::SelectOptions do
     it 'respects scopes' do
       State.select_options.map(&:first).should eq state_names
       State.starting_with_c.select_options.map(&:first).should eq %w( California Colorado )
+    end
+
+    it 'respects associations' do
+      City.starting_with_d.select_options.map(&:first).should eq %w( Dallas Denver )
+      State[:TX].cities.starting_with_d.select_options.map(&:first).should eq %w( Dallas )
+      State[:CO].cities.starting_with_d.select_options.map(&:first).should eq %w( Denver )
     end
 
     it 'clears the cache on save' do

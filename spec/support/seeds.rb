@@ -10,7 +10,11 @@ class ActiveRecord::Base
     data_table.each do |row|
       data = Hash[*headers.zip(row.split(/\s*\|\s*/)[1..-1]).flatten].with_indifferent_access
       if data[primary_key]
-        connection.execute("INSERT INTO #{table_name} SET #{ data.map{|k,v| "#{ connection.quote_column_name(k) } = #{ connection.quote(v) }" }.join(', ') }")
+        columns, values = data.each_with_object([[], []]) do |(c,v), (cols, vals)|
+          cols << connection.quote_column_name(c)
+          vals << connection.quote(v)
+        end
+        connection.execute("INSERT INTO #{table_name} (#{ columns * ', ' }) VALUES (#{ values * ', ' })")
       else
         create(data)
       end
@@ -19,15 +23,24 @@ class ActiveRecord::Base
 end
 
 State.seed %q{
-  +--------------+------------+
-  | abbreviation | name       |
-  +--------------+------------+
-  | AZ           | Arizona    |
-  | NY           | New York   |
-  | CA           | California |
-  | TX           | Texas      |
-  | CO           | Colorado   |
-  +--------------+------------+
+  +----+--------------+------------+
+  | id | abbreviation | name       |
+  +----+--------------+------------+
+  |  1 | AZ           | Arizona    |
+  |  2 | NY           | New York   |
+  |  3 | CA           | California |
+  |  4 | TX           | Texas      |
+  |  5 | CO           | Colorado   |
+  +----+--------------+------------+
+}
+
+City.seed %q{
+  +----------+------------+
+  | state_id | name       |
+  +----------+------------+
+  |        5 | Denver     |
+  |        4 | Dallas     |
+  +----------+------------+
 }
 
 Currency.seed %q{

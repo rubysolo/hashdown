@@ -1,6 +1,7 @@
 class State < ActiveRecord::Base
   scope :starting_with_c, -> { where("name like 'C%'") }
   finder :abbreviation
+  has_many :cities
   selectable
 
   def label
@@ -17,6 +18,12 @@ end
 class StateDefaultNil < ActiveRecord::Base
   self.table_name = 'states'
   finder :abbreviation, default: nil
+end
+
+class City < ActiveRecord::Base
+  scope :starting_with_d, -> { where("name like 'D%'") }
+  belongs_to :state
+  selectable
 end
 
 class Currency < ActiveRecord::Base
